@@ -1,7 +1,7 @@
 CXX		= g++
 CXXFLAGS	= -g -Wall -std=c++11
 EXTRAS		= lexer.cpp
-OBJS		= lexer.o string.o
+OBJS		= lexer.o parser.o string.o
 PROG		= scc
 
 

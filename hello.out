@@ -1,0 +1,22 @@
+keyword int
+identifier printf
+operator (
+keyword char
+operator *
+identifier s
+operator ,
+operator ...
+operator )
+operator ;
+keyword int
+identifier main
+operator (
+keyword void
+operator )
+operator {
+identifier printf
+operator (
+string "hello world\n"
+operator )
+operator ;
+operator }
