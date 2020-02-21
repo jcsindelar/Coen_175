@@ -14,6 +14,7 @@
 # include <cstdlib>
 # include <iostream>
 # include "string.h"
+# include "tokens.h"
 # include "lexer.h"
 
 using namespace std;
@@ -21,7 +22,6 @@ using namespace std;
 int numerrors = 0;
 static void checkInt(), checkReal();
 static void checkString(), checkChar();
-static void printToken(const string &label);
 static void ignoreComment();
 %}
 
@@ -30,57 +30,57 @@ static void ignoreComment();
 
 "/*"					{ignoreComment();}
 
-"auto"					{printToken("keyword");}
-"break"					{printToken("keyword");}
-"case"					{printToken("keyword");}
-"char"					{printToken("keyword");}
-"const"					{printToken("keyword");}
-"continue"				{printToken("keyword");}
-"default"				{printToken("keyword");}
-"do"					{printToken("keyword");}
-"double"				{printToken("keyword");}
-"else"					{printToken("keyword");}
-"enum"					{printToken("keyword");}
-"extern"				{printToken("keyword");}
-"float"					{printToken("keyword");}
-"for"					{printToken("keyword");}
-"goto"					{printToken("keyword");}
-"if"					{printToken("keyword");}
-"int"					{printToken("keyword");}
-"long"					{printToken("keyword");}
-"register"				{printToken("keyword");}
-"return"				{printToken("keyword");}
-"short"					{printToken("keyword");}
-"signed"				{printToken("keyword");}
-"sizeof"				{printToken("keyword");}
-"static"				{printToken("keyword");}
-"struct"				{printToken("keyword");}
-"switch"				{printToken("keyword");}
-"typedef"				{printToken("keyword");}
-"union"					{printToken("keyword");}
-"unsigned"				{printToken("keyword");}
-"void"					{printToken("keyword");}
-"volatile"				{printToken("keyword");}
-"while"					{printToken("keyword");}
+"auto"					{return AUTO;}
+"break"					{return BREAK;}
+"case"					{return CASE;}
+"char"					{return CHAR;}
+"const"					{return CONST;}
+"continue"				{return CONTINUE;}
+"default"				{return DEFAULT;}
+"do"					{return DO;}
+"double"				{return DOUBLE;}
+"else"					{return ELSE;}
+"enum"					{return ENUM;}
+"extern"				{return EXTERN;}
+"float"					{return FLOAT;}
+"for"					{return FOR;}
+"goto"					{return GOTO;}
+"if"					{return IF;}
+"int"					{return INT;}
+"long"					{return LONG;}
+"register"				{return REGISTER;}
+"return"				{return RETURN;}
+"short"					{return SHORT;}
+"signed"				{return SIGNED;}
+"sizeof"				{return SIZEOF;}
+"static"				{return STATIC;}
+"struct"				{return STRUCT;}
+"switch"				{return SWITCH;}
+"typedef"				{return TYPEDEF;}
+"union"					{return UNION;}
+"unsigned"				{return UNSIGNED;}
+"void"					{return VOID;}
+"volatile"				{return VOLATILE;}
+"while"					{return WHILE;}
 
-"||"					{printToken("operator");}
-"&&"					{printToken("operator");}
-"=="					{printToken("operator");}
-"!="					{printToken("operator");}
-"<="					{printToken("operator");}
-">="					{printToken("operator");}
-"++"					{printToken("operator");}
-"--"					{printToken("operator");}
-"->"					{printToken("operator");}
-"..."					{printToken("operator");}
-[-|=<>+*/%&!()\[\]{};:.,]		{printToken("operator");}
+"||"					{return OR;}
+"&&"					{return AND;}
+"=="					{return EQL;}
+"!="					{return NEQ;}
+"<="					{return LEQ;}
+">="					{return GEQ;}
+"++"					{return INC;}
+"--"					{return DEC;}
+"->"					{return ARROW;}
+"..."					{return ELLIPSIS;}
+[-|=<>+*/%&!()\[\]{};:.,]		{return *yytext;}
 
-[a-zA-Z_][a-zA-Z_0-9]*			{printToken("identifier");}
+[a-zA-Z_][a-zA-Z_0-9]*			{return ID;}
 
-[0-9]+					{checkInt(); printToken("integer");}
-[0-9]+\.[0-9]+([eE][+-]?[0-9]+)?	{checkReal(); printToken("real");}
-\"(\\.|[^\\\n"])*\"			{checkString(); printToken("string");}
-\'(\\.|[^\\\n'])+\'			{checkChar(); printToken("character");}
+[0-9]+					{checkInt(); return INTEGER;}
+[0-9]+\.[0-9]+([eE][+-]?[0-9]+)?	{checkReal(); return REAL;}
+\"(\\.|[^\\\n"])*\"			{checkString(); return STRING;}
+\'(\\.|[^\\\n'])+\'			{checkChar(); return CHARACTER;}
 
 [ \f\n\r\t\v]+				{/* ignored */}
 .					{/* ignored */}
@@ -209,29 +209,4 @@ void report(const string &str, const string &arg)
     snprintf(buf, sizeof(buf), str.c_str(), arg.c_str());
     cerr << "line " << yylineno << ": " << buf << endl;
     numerrors ++;
-}
-
-
-/*
- * Function:	printToken
- *
- * Description:	Print the current lexeme prefixed by a label.
- */
-
-static void printToken(const string &label)
-{
-    cout << label << " " << yytext << endl;
-}
-
-
-/*
- * Function:	main
- *
- * Description:	Analyze the standard input stream.
- */
-
-int main()
-{
-    yylex();
-    return 0;
 }
